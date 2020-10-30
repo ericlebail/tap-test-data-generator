@@ -1,0 +1,16 @@
+{
+  "dim-sample-list": [
+    {
+      "width": 5,
+      "height": 10
+    },
+    {
+      "width": 10,
+      "height": 20
+    },
+    {
+      "width": 20,
+      "height": 40
+    }
+  ]
+}

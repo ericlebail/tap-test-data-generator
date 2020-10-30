@@ -1,0 +1,5 @@
+include LICENSE
+include tap_test_data_generator/schemas/*.json
+include tap_test_data_generator/metadatas/*.json
+include tap_test_data_generator/object-repositories/*.json
+include sample_config.json

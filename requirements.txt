@@ -1,0 +1,23 @@
+#############################################
+# library dependencies
+#############################################
+singer-python==5.9.0
+setuptools==41.2.0
+ijson==3.1.post0
+jsonschema==2.6.0
+allpairspy==2.5.0
+Faker==4.1.1
+exrex==0.10.5
+
+###########################################
+# dev dependencies
+###########################################
+# testing
+coverage==4.5.1
+pytest==3.9.2
+pytest-mock==1.10.0
+pytest-html>=1.19.0,<2
+testfixtures==6.3.0
+
+# version management
+bump2version

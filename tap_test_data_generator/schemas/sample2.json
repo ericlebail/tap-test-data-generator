@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$ref": "#/definitions/sample",
+  "definitions": {
+    "sample": {
+      "type": "object",
+      "required": [
+        "checked",
+        "dimensions",
+        "id",
+        "name",
+        "color",
+        "price",
+        "tags",
+        "hour"
+      ],
+      "properties": {
+        "checked": {
+          "$id": "#/properties/checked",
+          "type": "boolean",
+          "$pairwise": true
+        },
+        "dimensions": {
+          "$id": "#/properties/dimensions",
+          "type": "object",
+          "required": [
+            "width",
+            "height"
+          ],
+          "properties": {
+            "width": {
+              "$id": "#/properties/dimensions/properties/width",
+              "type": "integer"
+            },
+            "height": {
+              "$id": "#/properties/dimensions/properties/height",
+              "type": "integer"
+            }
+          },
+          "additionalProperties": true,
+          "$generator": "#/object-repository/dim-sample",
+          "$pairwise": true
+        },
+        "id": {
+          "$id": "#/properties/id",
+          "type": "integer"
+        },
+        "name": {
+          "$id": "#/properties/name",
+          "type": "string",
+          "$generator": "#/string-type/lastName"
+        },
+        "color": {
+          "$id": "#/properties/color",
+          "type": "string",
+          "enum": ["green", "yellow", "red"],
+          "$pairwise": true
+        },
+        "price": {
+          "$id": "#/properties/price",
+          "type": "number"
+        },
+        "tags": {
+          "$id": "#/properties/tags",
+          "type": "array",
+          "additionalItems": true,
+          "items": {
+            "$id": "#/properties/tags/items",
+            "type": "string"
+          }
+        },
+        "hour": {
+          "$id": "#/properties/hour",
+          "type": "string",
+          "pattern": "(1[0-2]|0[1-9])(:[0-5]\\d){2} (A|P)M"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

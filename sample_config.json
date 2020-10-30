@@ -1,0 +1,32 @@
+{
+  "schema_dir": "tap-test-data-generator/tap_test_data_generator/schemas",
+  "metadata_dir": "tap-test-data-generator/tap_test_data_generator/metadatas",
+  "object_repository_dir": "tap-test-data-generator/tap_test_data_generator/object-repositories",
+  "static_input_dir": "",
+  "record_number": 1,
+  "apply_record_number_on_pairwise": true,
+  "generate_pairwise_hash": false,
+  "data_locale_list": ["en_US","fr_FR"],
+  "stream_configs": {
+    "sample": {
+      "record_number": 1,
+      "apply_record_number_on_pairwise": false,
+      "generate_pairwise_hash": true,
+      "data_locale_list": ["en_US","fr_FR"],
+      "pair_generation_mode": "every_value_at_least_once"
+    },
+    "sample2": {
+      "record_number": 1,
+      "apply_record_number_on_pairwise": false,
+      "generate_pairwise_hash": true,
+      "data_locale_list": ["en_US","fr_FR"],
+      "pair_generation_mode": "all_combinations"
+    },
+    "sample3": {
+      "record_number": 1,
+      "apply_record_number_on_pairwise": false,
+      "generate_pairwise_hash": true,
+      "data_locale_list": ["en_US","fr_FR"]
+    }
+  }
+}
