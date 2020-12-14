@@ -8,6 +8,8 @@ from datetime import timedelta
 import exrex
 import singer
 
+from tap_test_data_generator.string_generator import StringGenerator
+
 LOGGER = singer.get_logger()
 
 
@@ -28,39 +30,16 @@ def generate_formatted_string(faker_factory, schema_json):
 
 
 def generate_string_with_type(faker_factory, schema_json):
-    generator_value = ""
     if "$generator" in schema_json:
         generator_value = schema_json['$generator']
-    if generator_value == '#/string-type/city':
-        generated_string = faker_factory.city()
-    elif generator_value == '#/string-type/firstName':
-        generated_string = faker_factory.first_name()
-    elif generator_value == '#/string-type/lastName':
-        generated_string = faker_factory.last_name()
-    elif generator_value == '#/string-type/title':
-        generated_string = faker_factory.prefix()
-    elif generator_value == '#/string-type/phone':
-        generated_string = faker_factory.phone_number()
-    elif generator_value == '#/string-type/email':
-        generated_string = faker_factory.email()
-    elif generator_value == '#/string-type/languageCode':
-        generated_string = faker_factory.language_code()
-    elif generator_value == '#/string-type/countryCode':
-        generated_string = faker_factory.country_code()
-    elif generator_value == '#/string-type/country':
-        generated_string = faker_factory.country()
-    elif generator_value == '#/string-type/text':
-        # generate text
-        max_char = 100
-        if "maxLength" in schema_json:
-            max_char = schema_json['maxLength']
-        generated_string = faker_factory.text(max_nb_chars=max_char).replace('\n', '')
-    elif generator_value == '#/string-type/uuid':
-        generated_string = faker_factory.uuid4()
-    elif generator_value == '#/string-type/timezone':
-        generated_string = faker_factory.timezone()
-    elif generator_value == '#/string-type/empty':
-        generated_string = ""
+        string_type = generator_value.split("#/string-type/", 1)[1]
+        generate_function_name = "generate_" + string_type
+        generate_function = getattr(StringGenerator, generate_function_name, None)
+        if callable(generate_function):
+            generated_string = generate_function(faker_factory, schema_json)
+        else:
+            LOGGER.warning("unknown string type " + string_type)
+            generated_string = ""
     else:
         # running in random string mode
         min_char = 1
@@ -120,6 +99,9 @@ def generate_boolean(property_name, schema_json, faker_factory, pairs):
         pairwise_value = schema_json['$pairwise']
     if pairwise_value and (pairs is not None):
         generated_boolean = getattr(pairs, property_name)
+    elif "const" in schema_json:
+        const_value = schema_json['const']
+        generated_boolean = const_value
     else:
         generated_boolean = faker_factory.pybool()
     return generated_boolean
@@ -220,10 +202,10 @@ def generate_object(dictionary, property_name, schema_json, faker_factory, objec
                 else:
                     dictionary = child_dict
             else:
-                LOGGER.warning("No properties found for object : " + property_name)
+                LOGGER.warning("No properties found for object : " + str(property_name))
                 dictionary[property_name] = {}
     except Exception:
-        LOGGER.exception("Unexpected error for property : " + property_name)
+        LOGGER.exception("Unexpected error for property : " + str(property_name))
     return dictionary
 
 

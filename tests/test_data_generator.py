@@ -458,6 +458,21 @@ def test_generate_boolean_pair():
     assert getattr(pairs, property_name) == generated_boolean
 
 
+def test_generate_boolean_const():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": "boolean",
+        "const": True
+    }
+    faker_factory = Faker()
+    # when
+    generated_boolean = data_generator.generate_boolean(property_name, schema_json, faker_factory, None)
+    # then
+    assert generated_boolean is not None
+    assert isinstance(generated_boolean, bool)
+
+
 def test_generate_boolean_nopair():
     # given
     property_name = "test_property"
@@ -816,6 +831,22 @@ def test_generate_string_with_type_empty():
     schema_json = {
         "type": "string",
         "$generator": "#/string-type/empty"
+    }
+    faker_factory = Faker()
+    # when
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    # then
+    assert generated_string is not None
+    assert isinstance(generated_string, str)
+    assert "" == generated_string
+
+
+def test_generate_string_with_type_invalid():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": "string",
+        "$generator": "#/string-type/invalid_type"
     }
     faker_factory = Faker()
     # when
