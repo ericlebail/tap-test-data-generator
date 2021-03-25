@@ -15,8 +15,8 @@ This tap:
 
 This tap uses [JSON Schema Draft 7](https://json-schema.org/)
 
-https://travis-ci.com/ericlebail/tap-test-data-generator.svg?branch=master
-
+![Build status](https://travis-ci.com/ericlebail/tap-test-data-generator.svg?branch=master)
+[![codecov](https://codecov.io/gh/ericlebail/tap-test-data-generator/branch/master/graph/badge.svg?token=C37SIU1IUG)](https://codecov.io/gh/ericlebail/tap-test-data-generator)
 
 ## Standard JSON schema has been extended to add required parameters for data generation
 
