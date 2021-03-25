@@ -32,7 +32,9 @@ setup(
     author="elebail",
     url="http://singer.io",
     license=license(),
-    classifiers=["Programming Language :: Python :: 3 :: Only"],
+    classifiers=["Programming Language :: Python :: 3 :: Only",
+        "License :: OSI Approved :: GNU Affero General Public License v3",
+        "Operating System :: OS Independent"],
     py_modules=["tap_test_data_generator"],
     install_requires=[
         "singer-python==5.9.0",
@@ -57,5 +59,6 @@ setup(
         "sample-config": ["sample_config.json"]
     },
     include_package_data=True,
+    python_requires=">=3.7",
     zip_safe=False
 )
