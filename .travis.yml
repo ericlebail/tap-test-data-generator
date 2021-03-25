@@ -6,6 +6,21 @@ python:
 # command to install dependencies
 install:
   - pip install -r requirements.txt
+  - pip install codecov
+  - pip install pytest-cov
+  - pip install .
 # command to run tests
 script:
-  - pytest
+  - pytest --cov-report=xml --cov=deeptabular tests/
+
+after_success:
+  - codecov
+
+deploy:
+  provider: pypi
+  user: __token__
+  password: $PYPI_TOKEN
+  distributions: "sdist bdist_wheel"
+  skip_existing: true
+  on:
+    tags: true
