@@ -25,7 +25,7 @@ extras = {
 # do not modify version number it will be injected by build script
 setup(
     name="tap-test-data-generator",
-    version="0.1.0",
+    version="1.0.0",
     description="Singer.io tap for generating test data",
     long_description=readme(),
     long_description_content_type="text/markdown",
