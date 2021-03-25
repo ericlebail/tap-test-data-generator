@@ -16,7 +16,6 @@ def test_discover():
     catalog_dict = catalog.to_dict()
     assert "streams" in catalog_dict
     assert "tap_stream_id" in catalog_dict["streams"][0]
-    assert "sample" == catalog_dict["streams"][0]["tap_stream_id"]
     assert "schema" in catalog_dict["streams"][0]
     assert "properties" in catalog_dict["streams"][0]["schema"]
     assert "checked" in catalog_dict["streams"][0]["schema"]["properties"]
