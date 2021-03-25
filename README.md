@@ -15,6 +15,9 @@ This tap:
 
 This tap uses [JSON Schema Draft 7](https://json-schema.org/)
 
+https://travis-ci.com/ericlebail/tap-test-data-generator.svg?branch=master
+
+
 ## Standard JSON schema has been extended to add required parameters for data generation
 
 - for "string" properties:
