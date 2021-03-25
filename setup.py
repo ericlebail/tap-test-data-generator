@@ -40,7 +40,7 @@ setup(
         "jsonschema==2.6.0",
         "Faker==4.1.1",
         "exrex==0.10.5",
-        "ijson==3.1.post0",
+        "ijson==3.1.4",
         "allpairspy==2.5.0"
     ],
     tests_require=test_deps,

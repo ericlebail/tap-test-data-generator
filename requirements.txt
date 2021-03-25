@@ -3,7 +3,7 @@
 #############################################
 singer-python==5.9.0
 setuptools==41.2.0
-ijson==3.1.post0
+ijson==3.1.4
 jsonschema==2.6.0
 allpairspy==2.5.0
 Faker==4.1.1
