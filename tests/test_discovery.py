@@ -15,10 +15,18 @@ def test_discover():
     assert catalog is not None
     catalog_dict = catalog.to_dict()
     assert "streams" in catalog_dict
-    assert "tap_stream_id" in catalog_dict["streams"][0]
-    assert "schema" in catalog_dict["streams"][0]
-    assert "properties" in catalog_dict["streams"][0]["schema"]
-    assert "checked" in catalog_dict["streams"][0]["schema"]["properties"]
-    assert "type" in catalog_dict["streams"][0]["schema"]["properties"]["checked"]
-    assert "boolean" == catalog_dict["streams"][0]["schema"]["properties"]["checked"]["type"]
+
+    item_number = 0
+    for stream in catalog_dict["streams"]:
+        item_number += 1
+        assert "tap_stream_id" in stream
+        # test the "sample stream"
+        if "sample" == stream["tap_stream_id"]:
+            assert "schema" in stream
+            assert "properties" in stream["schema"]
+            assert "checked" in stream["schema"]["properties"]
+            assert "type" in stream["schema"]["properties"]["checked"]
+            assert "boolean" == stream["schema"]["properties"]["checked"]["type"]
+    # test item number
+    assert item_number is 3
 
