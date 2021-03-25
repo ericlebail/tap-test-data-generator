@@ -2,14 +2,8 @@
 from setuptools import setup, find_packages
 
 
-def license():
-    with open('LICENSE') as f:
-        return f.read()
-
-
-def readme():
-    with open('README.md') as f:
-        return f.read()
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
 
 
 test_deps = [
@@ -27,11 +21,10 @@ setup(
     name="tap-test-data-generator",
     version="1.0.0",
     description="Singer.io tap for generating test data",
-    long_description=readme(),
+    long_description=long_description,
     long_description_content_type="text/markdown",
-    author="elebail",
-    url="http://singer.io",
-    license=license(),
+    author="ericlebail",
+    url="https://github.com/ericlebail/tap-test-data-generator",
     classifiers=["Programming Language :: Python :: 3 :: Only",
         "License :: OSI Approved :: GNU Affero General Public License v3",
         "Operating System :: OS Independent"],
