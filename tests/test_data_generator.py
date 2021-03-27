@@ -57,7 +57,7 @@ def test_generate_dictionary():
     faker_factory = Faker()
     # when
     generated_dict = data_generator.generate_dictionary(None, schema_json, {}, faker_factory, object_repositories,
-                                                        pairs, definitions)
+                                                        pairs, definitions, 5)
     # then
     assert generated_dict is not None
     assert "checked" in generated_dict
@@ -88,7 +88,7 @@ def test_generate_dictionary_no_pairs():
     faker_factory = Faker()
     # when
     generated_dict = data_generator.generate_dictionary(None, schema_json, {}, faker_factory, object_repositories,
-                                                        None, definitions)
+                                                        None, definitions, 5)
     # then
     assert generated_dict is not None
     assert "checked" in generated_dict
@@ -115,6 +115,22 @@ def test_extract_value_lists_from_string_enum():
     assert ['green', 'yellow', 'red'] == value_lists["test_property"]
 
 
+def test_extract_value_lists_from_string_enum_withNull():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['string', 'null'],
+        "enum": ["green", "yellow", "red"]
+    }
+    # when
+    value_lists = data_generator.extract_value_lists_from_string(property_name, schema_json)
+    # then
+    assert value_lists is not None
+    assert "test_property" in value_lists
+    assert ['green', 'yellow', 'red', None] == value_lists["test_property"]
+
+
+
 def test_extract_value_lists_from_string_pattern():
     # given
     property_name = "test_property"
@@ -128,6 +144,21 @@ def test_extract_value_lists_from_string_pattern():
     assert value_lists is not None
     assert "test_property" in value_lists
     assert ['AM', 'PM'] == value_lists["test_property"]
+
+
+def test_extract_value_lists_from_string_pattern_withNull():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['string', 'null'],
+        "pattern": "(A|P)M"
+    }
+    # when
+    value_lists = data_generator.extract_value_lists_from_string(property_name, schema_json)
+    # then
+    assert value_lists is not None
+    assert "test_property" in value_lists
+    assert ['AM', 'PM', None] == value_lists["test_property"]
 
 
 def test_extract_value_lists_from_object_repository():
@@ -151,11 +182,90 @@ def test_extract_value_lists_from_object_repository():
         "test_property"]
 
 
+def test_extract_value_lists_from_object_repository_withNull():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['object', 'null'],
+        "$generator": "#/object-repository/dim-sample",
+        "$pairwise": True
+    }
+    config = {
+        "object_repository_dir": "tap_test_data_generator/object-repositories"
+    }
+    object_repositories = load_repositories(config)
+    # when
+    value_lists = data_generator.extract_value_lists_from_object(property_name, schema_json, object_repositories, {})
+    # then
+    assert value_lists is not None
+    assert "test_property" in value_lists
+    assert [{'width': 5, 'height': 10}, {'width': 10, 'height': 20}, {'width': 20, 'height': 40}, None] == value_lists[
+        "test_property"]
+
+
 def test_extract_value_lists_from_object_no_repository():
     # given
     property_name = "test_property"
     schema_json = {
         "type": "object",
+        "required": [
+            "one",
+            "two"
+        ],
+        "properties": {
+            "one": {
+                "type": "integer"
+            },
+            "two": {
+                "type": "string",
+                "enum": ["green", "yellow", "red"],
+                "$pairwise": True
+            }
+        },
+        "additionalProperties": True
+    }
+    # when
+    value_lists = data_generator.extract_value_lists_from_object(property_name, schema_json, None, {})
+    # then
+    assert value_lists is not None
+    assert "two" in value_lists
+    assert ['green', 'yellow', 'red'] == value_lists["two"]
+
+
+def test_extract_value_lists_from_object_no_repository_withNull():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": "object",
+        "required": [
+            "one",
+            "two"
+        ],
+        "properties": {
+            "one": {
+                "type": "integer"
+            },
+            "two": {
+                "type": ['string', 'null'],
+                "enum": ["green", "yellow", "red"],
+                "$pairwise": True
+            }
+        },
+        "additionalProperties": True
+    }
+    # when
+    value_lists = data_generator.extract_value_lists_from_object(property_name, schema_json, None, {})
+    # then
+    assert value_lists is not None
+    assert "two" in value_lists
+    assert ['green', 'yellow', 'red', None] == value_lists["two"]
+
+
+def test_extract_value_lists_from_object_no_repository_parentNull():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['object', 'null'],
         "required": [
             "one",
             "two"
@@ -192,7 +302,7 @@ def test_generate_array_string_default():
     }
     faker_factory = Faker()
     # when
-    value_lists = data_generator.generate_array({}, property_name, schema_json, faker_factory, None, None, {})
+    value_lists = data_generator.generate_array({}, property_name, schema_json, faker_factory, None, None, {}, 5)
     # then
     assert value_lists is not None
     assert "test_property" in value_lists
@@ -215,7 +325,7 @@ def test_generate_array_string_item_number():
     }
     faker_factory = Faker()
     # when
-    value_lists = data_generator.generate_array({}, property_name, schema_json, faker_factory, None, None, {})
+    value_lists = data_generator.generate_array({}, property_name, schema_json, faker_factory, None, None, {}, 5)
     # then
     assert value_lists is not None
     assert "test_property" in value_lists
@@ -244,7 +354,7 @@ def test_generate_object_repository():
     pairs = pairwise_values.next()
     # when
     dictionary = data_generator.generate_object({}, property_name, schema_json, faker_factory, object_repositories,
-                                                pairs, {})
+                                                pairs, {}, 5)
     # then
     assert dictionary is not None
     assert "test_property" in dictionary
@@ -274,7 +384,7 @@ def test_generate_object_no_repository():
     }
     faker_factory = Faker()
     # when
-    dictionary = data_generator.generate_object({}, property_name, schema_json, faker_factory, None, None, {})
+    dictionary = data_generator.generate_object({}, property_name, schema_json, faker_factory, None, None, {}, 5)
     # then
     assert dictionary is not None
     assert "test_property" in dictionary
@@ -303,7 +413,7 @@ def test_generate_object_type_empty():
     }
     faker_factory = Faker()
     # when
-    dictionary = data_generator.generate_object({}, property_name, schema_json, faker_factory, None, None, {})
+    dictionary = data_generator.generate_object({}, property_name, schema_json, faker_factory, None, None, {}, 5)
     # then
     assert dictionary is not None
     assert "test_property" in dictionary
@@ -326,7 +436,7 @@ def test_generate_string_pair_enum():
     pairwise_values = AllPairs(value_lists)
     pairs = pairwise_values.next()
     # when
-    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, pairs)
+    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, pairs, 0)
     # then
     assert generated_string is not None
     assert "" != generated_string
@@ -343,7 +453,7 @@ def test_generate_string_nopair_enum():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None)
+    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None, 0)
     # then
     assert generated_string is not None
     assert "" != generated_string
@@ -359,7 +469,7 @@ def test_generate_string_enum():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None)
+    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None, 0)
     # then
     assert generated_string is not None
     assert "" != generated_string
@@ -381,7 +491,7 @@ def test_generate_string_pair_pattern():
     pairwise_values = AllPairs(value_lists)
     pairs = pairwise_values.next()
     # when
-    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, pairs)
+    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, pairs, 0)
     # then
     assert generated_string is not None
     assert "" != generated_string
@@ -398,7 +508,7 @@ def test_generate_string_nopair_pattern():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None)
+    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None, 0)
     # then
     assert generated_string is not None
     assert "" != generated_string
@@ -414,7 +524,7 @@ def test_generate_string_pattern():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None)
+    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None, 0)
     # then
     assert generated_string is not None
     assert "" != generated_string
@@ -430,12 +540,26 @@ def test_generate_string_const():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None)
+    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None, 0)
     # then
     assert generated_string is not None
     assert "" != generated_string
     assert "my value" == generated_string
 
+
+def test_generate_string_basic():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": "string"
+    }
+    faker_factory = Faker()
+    # when
+    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None, 0)
+    # then
+    assert generated_string is not None
+    assert "" != generated_string
+    
 
 def test_generate_boolean_pair():
     # given
@@ -451,7 +575,7 @@ def test_generate_boolean_pair():
     pairwise_values = AllPairs(value_lists)
     pairs = pairwise_values.next()
     # when
-    generated_boolean = data_generator.generate_boolean(property_name, schema_json, faker_factory, pairs)
+    generated_boolean = data_generator.generate_boolean(property_name, schema_json, faker_factory, pairs, 0)
     # then
     assert generated_boolean is not None
     assert isinstance(generated_boolean, bool)
@@ -467,7 +591,7 @@ def test_generate_boolean_const():
     }
     faker_factory = Faker()
     # when
-    generated_boolean = data_generator.generate_boolean(property_name, schema_json, faker_factory, None)
+    generated_boolean = data_generator.generate_boolean(property_name, schema_json, faker_factory, None, 0)
     # then
     assert generated_boolean is not None
     assert isinstance(generated_boolean, bool)
@@ -482,7 +606,7 @@ def test_generate_boolean_nopair():
     }
     faker_factory = Faker()
     # when
-    generated_boolean = data_generator.generate_boolean(property_name, schema_json, faker_factory, None)
+    generated_boolean = data_generator.generate_boolean(property_name, schema_json, faker_factory, None, 0)
     # then
     assert generated_boolean is not None
     assert isinstance(generated_boolean, bool)
@@ -496,10 +620,37 @@ def test_generate_boolean():
     }
     faker_factory = Faker()
     # when
-    generated_boolean = data_generator.generate_boolean(property_name, schema_json, faker_factory, None)
+    generated_boolean = data_generator.generate_boolean(property_name, schema_json, faker_factory, None, 0)
     # then
     assert generated_boolean is not None
     assert isinstance(generated_boolean, bool)
+
+
+def test_generate_boolean_null0():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['boolean', 'null']
+    }
+    faker_factory = Faker()
+    # when
+    generated_boolean = data_generator.generate_boolean(property_name, schema_json, faker_factory, None, 0)
+    # then
+    assert generated_boolean is not None
+    assert isinstance(generated_boolean, bool)
+
+
+def test_generate_boolean_null100():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['boolean', 'null']
+    }
+    faker_factory = Faker()
+    # when
+    generated_boolean = data_generator.generate_boolean(property_name, schema_json, faker_factory, None, 100)
+    # then
+    assert generated_boolean is None
 
 
 def test_generate_integer():
@@ -510,11 +661,39 @@ def test_generate_integer():
     }
     faker_factory = Faker()
     # when
-    generated_integer = data_generator.generate_integer(schema_json, faker_factory)
+    generated_integer = data_generator.generate_integer(schema_json, faker_factory, 0)
     # then
     assert generated_integer is not None
     assert isinstance(generated_integer, int)
     assert len(str(generated_integer)) <= 10
+
+
+def test_generate_integer_withNull0():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['integer', 'null']
+    }
+    faker_factory = Faker()
+    # when
+    generated_integer = data_generator.generate_integer(schema_json, faker_factory, 0)
+    # then
+    assert generated_integer is not None
+    assert isinstance(generated_integer, int)
+    assert len(str(generated_integer)) <= 10
+
+
+def test_generate_integer_withNull100():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['integer', 'null']
+    }
+    faker_factory = Faker()
+    # when
+    generated_integer = data_generator.generate_integer(schema_json, faker_factory, 100)
+    # then
+    assert generated_integer is None
 
 
 def test_generate_integer_minimum_maximum():
@@ -527,7 +706,7 @@ def test_generate_integer_minimum_maximum():
     }
     faker_factory = Faker()
     # when
-    generated_integer = data_generator.generate_integer(schema_json, faker_factory)
+    generated_integer = data_generator.generate_integer(schema_json, faker_factory, 0)
     # then
     assert generated_integer is not None
     assert isinstance(generated_integer, int)
@@ -544,7 +723,7 @@ def test_generate_integer_const_value():
     }
     faker_factory = Faker()
     # when
-    generated_integer = data_generator.generate_integer(schema_json, faker_factory)
+    generated_integer = data_generator.generate_integer(schema_json, faker_factory, 0)
     # then
     assert generated_integer is not None
     assert isinstance(generated_integer, int)
@@ -560,7 +739,7 @@ def test_generate_integer_const_null():
     }
     faker_factory = Faker()
     # when
-    generated_integer = data_generator.generate_integer(schema_json, faker_factory)
+    generated_integer = data_generator.generate_integer(schema_json, faker_factory, 0)
     # then
     assert generated_integer is None
 
@@ -574,7 +753,7 @@ def test_generate_integer_maxLength():
     }
     faker_factory = Faker()
     # when
-    generated_integer = data_generator.generate_integer(schema_json, faker_factory)
+    generated_integer = data_generator.generate_integer(schema_json, faker_factory, 0)
     # then
     assert generated_integer is not None
     assert isinstance(generated_integer, int)
@@ -589,11 +768,39 @@ def test_generate_number():
     }
     faker_factory = Faker()
     # when
-    generated_number = data_generator.generate_number(schema_json, faker_factory)
+    generated_number = data_generator.generate_number(schema_json, faker_factory, 0)
     # then
     assert generated_number is not None
     assert isinstance(generated_number, float)
     assert len(str(generated_number)) <= 11  # 1 character can be added for - sign
+
+
+def test_generate_number_withNull0():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['number', 'null']
+    }
+    faker_factory = Faker()
+    # when
+    generated_number = data_generator.generate_number(schema_json, faker_factory, 0)
+    # then
+    assert generated_number is not None
+    assert isinstance(generated_number, float)
+    assert len(str(generated_number)) <= 11  # 1 character can be added for - sign
+
+
+def test_generate_number_withNull100():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['number', 'null']
+    }
+    faker_factory = Faker()
+    # when
+    generated_number = data_generator.generate_number(schema_json, faker_factory, 100)
+    # then
+    assert generated_number is None
 
 
 def test_generate_number_minimum_maximum():
@@ -606,7 +813,7 @@ def test_generate_number_minimum_maximum():
     }
     faker_factory = Faker()
     # when
-    generated_number = data_generator.generate_number(schema_json, faker_factory)
+    generated_number = data_generator.generate_number(schema_json, faker_factory, 0)
     # then
     assert generated_number is not None
     assert isinstance(generated_number, float)
@@ -623,7 +830,7 @@ def test_generate_number_const_value():
     }
     faker_factory = Faker()
     # when
-    generated_number = data_generator.generate_number(schema_json, faker_factory)
+    generated_number = data_generator.generate_number(schema_json, faker_factory, 0)
     # then
     assert generated_number is not None
     assert isinstance(generated_number, float)
@@ -639,7 +846,7 @@ def test_generate_number_const_null():
     }
     faker_factory = Faker()
     # when
-    generated_number = data_generator.generate_number(schema_json, faker_factory)
+    generated_number = data_generator.generate_number(schema_json, faker_factory, 0)
     # then
     assert generated_number is None
 
@@ -653,7 +860,7 @@ def test_generate_number_max_length():
     }
     faker_factory = Faker()
     # when
-    generated_number = data_generator.generate_number(schema_json, faker_factory)
+    generated_number = data_generator.generate_number(schema_json, faker_factory, 0)
     # then
     assert generated_number is not None
     assert isinstance(generated_number, float)
@@ -669,7 +876,7 @@ def test_generate_string_with_type_city():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -684,7 +891,7 @@ def test_generate_string_with_type_firstName():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -699,7 +906,7 @@ def test_generate_string_with_type_lastName():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -714,7 +921,7 @@ def test_generate_string_with_type_title():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -729,7 +936,7 @@ def test_generate_string_with_type_phone():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -744,7 +951,7 @@ def test_generate_string_with_type_email():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -759,7 +966,7 @@ def test_generate_string_with_type_languageCode():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -774,7 +981,7 @@ def test_generate_string_with_type_countryCode():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -789,7 +996,7 @@ def test_generate_string_with_type_country():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -804,7 +1011,7 @@ def test_generate_string_with_type_uuid():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -819,7 +1026,7 @@ def test_generate_string_with_type_timezone():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -834,7 +1041,7 @@ def test_generate_string_with_type_empty():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -850,7 +1057,7 @@ def test_generate_string_with_type_invalid():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -866,7 +1073,7 @@ def test_generate_string_with_type_text():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -883,7 +1090,7 @@ def test_generate_string_with_type_text_maxLength():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -898,7 +1105,7 @@ def test_generate_string_with_type_random():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -916,7 +1123,7 @@ def test_generate_string_with_type_random_minLength_maxLength():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json)
+    generated_string = data_generator.generate_string_with_type(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -933,7 +1140,37 @@ def test_generate_formatted_string_date():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_formatted_string(faker_factory, schema_json)
+    generated_string = data_generator.generate_formatted_string(faker_factory, schema_json, 0)
+    # then
+    assert generated_string is not None
+    assert isinstance(generated_string, str)
+    assert datetime.strptime(generated_string, '%Y-%m-%d')
+
+
+def test_generate_formatted_string_date_with_null100():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['string', 'null'],
+        "format": "date"
+    }
+    faker_factory = Faker()
+    # when
+    generated_string = data_generator.generate_formatted_string(faker_factory, schema_json, 100)
+    # then
+    assert generated_string is None
+
+
+def test_generate_formatted_string_date_with_null0():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['string', 'null'],
+        "format": "date"
+    }
+    faker_factory = Faker()
+    # when
+    generated_string = data_generator.generate_formatted_string(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -951,7 +1188,7 @@ def test_generate_formatted_string_date_min_max_future():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_formatted_string(faker_factory, schema_json)
+    generated_string = data_generator.generate_formatted_string(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
@@ -969,8 +1206,62 @@ def test_generate_formatted_string_date_min_max_past():
     }
     faker_factory = Faker()
     # when
-    generated_string = data_generator.generate_formatted_string(faker_factory, schema_json)
+    generated_string = data_generator.generate_formatted_string(faker_factory, schema_json, 0)
     # then
     assert generated_string is not None
     assert isinstance(generated_string, str)
     assert datetime.strptime(generated_string, '%Y-%m-%d')
+
+
+def test_generate_string_withNull0():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['string', 'null']
+    }
+    faker_factory = Faker()
+    # when
+    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None, 0)
+    # then
+    assert generated_string is not None
+    assert "" != generated_string
+
+
+def test_generate_string_withNull100():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['string', 'null']
+    }
+    faker_factory = Faker()
+    # when
+    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None, 100)
+    # then
+    assert generated_string is None
+
+
+def test_generate_string_withNull0_inverted():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['null','string']
+    }
+    faker_factory = Faker()
+    # when
+    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None, 0)
+    # then
+    assert generated_string is not None
+    assert "" != generated_string
+
+
+def test_generate_string_withNull0_inverted():
+    # given
+    property_name = "test_property"
+    schema_json = {
+        "type": ['null','string']
+    }
+    faker_factory = Faker()
+    # when
+    generated_string = data_generator.generate_string(property_name, schema_json, faker_factory, None, 100)
+    # then
+    assert generated_string is None
