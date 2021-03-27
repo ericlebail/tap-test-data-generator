@@ -142,6 +142,10 @@ def sync(config, state, catalog):
 
         record_index = 0
         record_number = load_config_for_stream(config, 'record_number', stream.tap_stream_id)
+        null_percent = load_config_for_stream(config, 'null_percent', stream.tap_stream_id)
+        if null_percent is None:
+            # default of 5 percent of generated values are null when applicable
+            null_percent = 5
 
         definitions = load_definitions(schema_json, config)
 
@@ -164,7 +168,7 @@ def sync(config, state, catalog):
         record_index = generate_and_write_record_pairwise_list(faker_factory, object_repositories, record_index,
                                                                record_number, schema_json, stream, value_lists,
                                                                apply_record_number_on_pairwise, generate_pairwise_hash,
-                                                               definitions, pair_generation_mode)
+                                                               definitions, pair_generation_mode, null_percent)
         # generate again in loop to have the specified record number even if pairwise is active.
         if apply_record_number_on_pairwise:
             while record_index < record_number:
@@ -172,7 +176,7 @@ def sync(config, state, catalog):
                                                                        record_number, schema_json, stream, value_lists,
                                                                        apply_record_number_on_pairwise,
                                                                        generate_pairwise_hash, definitions,
-                                                                       pair_generation_mode)
+                                                                       pair_generation_mode, null_percent)
     return
 
 
@@ -221,12 +225,12 @@ def load_json(file_path, stream_id, stream_schema):
 
 def generate_and_write_record_pairwise_list(faker_factory, object_repositories, record_index, record_number,
                                             schema_json, stream, value_lists, apply_record_number_on_pairwise,
-                                            generate_pairwise_hash, definitions, pair_generation_mode):
+                                            generate_pairwise_hash, definitions, pair_generation_mode, null_percent):
     # calculate the pairwise combinations
     pairwise_values = compute_value_pairs(value_lists, pair_generation_mode)
     for pairs in pairwise_values:
         record_index = generate_and_write_record(faker_factory, object_repositories, pairs, record_index,
-                                                 schema_json, stream, generate_pairwise_hash, definitions)
+                                                 schema_json, stream, generate_pairwise_hash, definitions, null_percent)
         # exit loop if number of record is reached
         if (record_index >= record_number) and apply_record_number_on_pairwise:
             break
@@ -234,17 +238,17 @@ def generate_and_write_record_pairwise_list(faker_factory, object_repositories, 
         # specific case with no pairwise generation, switch to full random mode
         while record_index < record_number:
             record_index = generate_and_write_record(faker_factory, object_repositories, None, record_index,
-                                                     schema_json, stream, generate_pairwise_hash, definitions)
+                                                     schema_json, stream, generate_pairwise_hash, definitions, null_percent)
     return record_index
 
 
 def generate_and_write_record(faker_factory, object_repositories, pairs, record_index, schema_json, stream,
-                              generate_pairwise_hash, definitions):
+                              generate_pairwise_hash, definitions, null_percent):
     # generate data matching schema for one record.
     try:
         # generate the required values
         generated_dict = data_generator.generate_dictionary(None, schema_json, {}, faker_factory, object_repositories,
-                                                            pairs, definitions)
+                                                            pairs, definitions, null_percent)
         # add the pairwise hash if needed
         if generate_pairwise_hash:
             pairwise_hash = data_generator.generate_pairwise_hash(pairs)
