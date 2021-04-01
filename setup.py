@@ -7,19 +7,17 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 
 test_deps = [
-    "pytest==3.9.2",
+    "pytest==6.2.2",
     "pytest-mock==1.10.0",
-    "pytest-html>=1.19.0,<2",
     "testfixtures==6.3.0",
-    "coverage==4.5.1"
+    "coverage==5.5"
 ]
 extras = {
     'test': test_deps,
 }
-# do not modify version number it will be injected by build script
 setup(
     name="tap-test-data-generator",
-    version="1.1.0",
+    version="1.2.0",
     description="Singer.io tap for generating test data",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -30,10 +28,10 @@ setup(
         "Operating System :: OS Independent"],
     py_modules=["tap_test_data_generator"],
     install_requires=[
-        "singer-python==5.9.0",
+        "singer-python==5.12.1",
         "requests",
         "jsonschema==2.6.0",
-        "Faker==4.1.1",
+        "Faker==7.0.1",
         "exrex==0.10.5",
         "ijson==3.1.4",
         "allpairspy==2.5.0"

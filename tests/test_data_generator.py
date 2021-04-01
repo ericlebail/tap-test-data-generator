@@ -29,7 +29,7 @@ def test_extract_value_lists():
     assert "checked" in value_lists
     assert [True, False] == value_lists["checked"]
     assert "dimensions" in value_lists
-    assert [{'width': 5, 'height': 10}, {'width': 10, 'height': 20}, {'width': 20, 'height': 40}] == value_lists[
+    assert [{'width': 5, 'height': 10}, {'width': 10, 'height': 20}, {'width': 20, 'height': 40}, None] == value_lists[
         "dimensions"]
     assert "color" in value_lists
     assert ['green', 'yellow', 'red'] == value_lists["color"]

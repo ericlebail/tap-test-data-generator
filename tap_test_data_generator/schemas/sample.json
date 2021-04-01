@@ -20,7 +20,7 @@
     },
     "dimensions": {
       "$id": "#/properties/dimensions",
-      "type": "object",
+      "type": ["object", "null"],
       "required": [
         "width",
         "height"

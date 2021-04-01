@@ -17,6 +17,9 @@ This tap uses [JSON Schema Draft 7](https://json-schema.org/)
 
 ![Build status](https://travis-ci.com/ericlebail/tap-test-data-generator.svg?branch=master)
 [![codecov](https://codecov.io/gh/ericlebail/tap-test-data-generator/branch/master/graph/badge.svg?token=C37SIU1IUG)](https://codecov.io/gh/ericlebail/tap-test-data-generator)
+[![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
+[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
+[![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
 
 [Sources on Github](https://github.com/ericlebail/tap-test-data-generator)
 
@@ -115,6 +118,10 @@ This tap uses [JSON Schema Draft 7](https://json-schema.org/)
             "type": "number",
             "maximum": 1000.00,
             "minimum": 0.00
+
+    - generate a random number or null/None (By default 5% of null are generated, this frequency can be configured)
+
+            "type": ["number", "null"]
         
 - for "integer" properties:
     - generate constant integer
@@ -132,6 +139,10 @@ This tap uses [JSON Schema Draft 7](https://json-schema.org/)
             "type": "integer",
             "maximum": 1000,
             "minimum": 0
+      
+    - generate a random integer or null/None (By default 5% of null are generated, this frequency can be configured)
+
+            "type": ["integer", "null"]
           
 
 - Pair combination generation is available:
@@ -158,6 +169,7 @@ Here is a sample config file:
           "apply_record_number_on_pairwise": true,
           "generate_pairwise_hash": false,
           "data_locale_list": ["en_US","fr_FR"],
+          "null_percent": 5,
           "stream_configs": {
             "sample": {
               "record_number": 100,
@@ -195,6 +207,7 @@ This parameter defines the type of combination generated with the possible value
     - pairwise : generates more combination compliant with [Pairwise Testing](http://pairwise.org/)
     - all_combinations : is the biggest, is will generate all possible combinations of the provided values (cartesian product)
 
+- "null_percent": Optional frequency in percent of Null values generated.
 
 ### Third part is stream specific configuration:
 
