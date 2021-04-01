@@ -8,6 +8,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 test_deps = [
     "pytest==6.2.2",
+    "pytest-cov==2.11.1",
     "pytest-mock==1.10.0",
     "testfixtures==6.3.0",
     "coverage==5.5"

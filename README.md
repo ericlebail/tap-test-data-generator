@@ -23,7 +23,7 @@ This tap uses [JSON Schema Draft 7](https://json-schema.org/)
 
 [Sources on Github](https://github.com/ericlebail/tap-test-data-generator)
 
-[Package on PyPI](https://pypi.org/project/tap-test-data-generator/)
+[![Package on PyPI](https://img.shields.io/pypi/v/tap-test-data-generator.svg)](https://pypi.org/project/tap-test-data-generator/)
 
 ## Standard JSON schema has been extended to add required parameters for data generation
 
