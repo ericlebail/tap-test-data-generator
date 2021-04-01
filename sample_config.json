@@ -7,6 +7,7 @@
   "apply_record_number_on_pairwise": true,
   "generate_pairwise_hash": false,
   "data_locale_list": ["en_US","fr_FR"],
+  "null_percent": 5,
   "stream_configs": {
     "sample": {
       "record_number": 1,
