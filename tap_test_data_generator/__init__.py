@@ -215,7 +215,7 @@ def load_json(file_path, stream_id, stream_schema, definitions):
         for o in objects:
             try:
                 resolver = jsonschema.RefResolver("", "", definitions)
-                validator = jsonschema.Draft7Validator(stream_schema.to_dict(), resolver=resolver)
+                validator = jsonschema.Draft202012Validator(stream_schema.to_dict(), resolver=resolver)
                 # validate the json schema itself
                 validator.check_schema(stream_schema)
                 # validate the data against the schema
