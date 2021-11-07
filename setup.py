@@ -7,11 +7,11 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 
 test_deps = [
-    "pytest==6.2.2",
-    "pytest-cov==2.11.1",
-    "pytest-mock==1.10.0",
-    "testfixtures==6.3.0",
-    "coverage==5.5"
+    "pytest==6.2.5",
+    "pytest-cov==3.0.0",
+    "pytest-mock==3.6.1",
+    "testfixtures==6.18.3",
+    "coverage==6.1.1"
 ]
 extras = {
     'test': test_deps,
@@ -29,10 +29,10 @@ setup(
         "Operating System :: OS Independent"],
     py_modules=["tap_test_data_generator"],
     install_requires=[
-        "singer-python==5.12.1",
+        "singer-python==5.12.2",
         "requests",
-        "jsonschema==2.6.0",
-        "Faker==7.0.1",
+        "jsonschema==4.2.1",
+        "Faker==9.8.0",
         "exrex==0.10.5",
         "ijson==3.1.4",
         "allpairspy==2.5.0"
