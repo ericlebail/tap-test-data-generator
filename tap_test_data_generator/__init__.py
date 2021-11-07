@@ -252,7 +252,7 @@ def generate_and_write_record(faker_factory, object_repositories, pairs, record_
     # generate data matching schema for one record.
     try:
         resolver = jsonschema.RefResolver("", "", definitions)
-        validator = jsonschema.Draft7Validator(schema_json, resolver=resolver)
+        validator = jsonschema.Draft202012Validator(schema_json, resolver=resolver)
         # validate the json schema itself
         validator.check_schema(schema_json)
         # generate the required values
