@@ -162,7 +162,7 @@ def sync(config, state, catalog):
                     if split_filename[0] == stream.tap_stream_id:
                         LOGGER.info("Static data file found for the stream")
                         path = get_abs_path(data_dir_name) + '/' + filename
-                        load_json(path, stream.tap_stream_id, stream.schema)
+                        load_json(path, stream.tap_stream_id, stream.schema, definitions)
 
         LOGGER.info("Generating records")
         record_index = generate_and_write_record_pairwise_list(faker_factory, object_repositories, record_index,
@@ -209,12 +209,17 @@ def load_repositories(config):
     return object_repositories
 
 
-def load_json(file_path, stream_id, stream_schema):
+def load_json(file_path, stream_id, stream_schema, definitions):
     with open(file_path, 'rb') as fd:
         objects = ijson.items(fd, stream_id + '.item')
         for o in objects:
             try:
-                validate(o, stream_schema.to_dict())
+                resolver = jsonschema.RefResolver("", "", definitions)
+                validator = jsonschema.Draft202012Validator(stream_schema.to_dict(), resolver=resolver)
+                # validate the json schema itself
+                validator.check_schema(stream_schema)
+                # validate the data against the schema
+                validator.validate(o)
                 singer.write_record(stream_id, o)
             except jsonschema.exceptions.SchemaError as err:
                 LOGGER.warning("Schema is invalid : " + err.message)
@@ -246,22 +251,30 @@ def generate_and_write_record(faker_factory, object_repositories, pairs, record_
                               generate_pairwise_hash, definitions, null_percent):
     # generate data matching schema for one record.
     try:
+        resolver = jsonschema.RefResolver("", "", definitions)
+        validator = jsonschema.Draft202012Validator(schema_json, resolver=resolver)
+        # validate the json schema itself
+        validator.check_schema(schema_json)
         # generate the required values
         generated_dict = data_generator.generate_dictionary(None, schema_json, {}, faker_factory, object_repositories,
                                                             pairs, definitions, null_percent)
+        # validate the data against the schema
+        validator.validate(generated_dict)
         # add the pairwise hash if needed
         if generate_pairwise_hash:
             pairwise_hash = data_generator.generate_pairwise_hash(pairs)
             generated_dict["pairwise_hash"] = pairwise_hash
-        resolver = jsonschema.RefResolver("", "", definitions)
-        jsonschema.Draft4Validator(stream.schema.to_dict(), resolver=resolver).validate(generated_dict)
         # write one or more rows to the stream:
         singer.write_record(stream.tap_stream_id, generated_dict)
+        record_index += 1
     except jsonschema.exceptions.SchemaError as err:
         LOGGER.warning("Schema is invalid : " + err.message)
+        full_path = ""
+        for path in err.path:
+            full_path = full_path + " > " + path
+        LOGGER.warning("Path " + full_path)
     except jsonschema.exceptions.ValidationError as err2:
         LOGGER.warning("Schema validation failed : " + err2.message)
-    record_index += 1
     return record_index
 
 

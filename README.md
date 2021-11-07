@@ -13,13 +13,14 @@ This tap:
 - Outputs the schema for each stream
 - Incrementally generate data based on the schema and send the generated Singer records to the data streams.
 
-This tap uses [JSON Schema Draft 7](https://json-schema.org/)
+This tap uses [JSON Schema Draft 202012](https://json-schema.org/)
 
 ![Build status](https://travis-ci.com/ericlebail/tap-test-data-generator.svg?branch=master)
 [![codecov](https://codecov.io/gh/ericlebail/tap-test-data-generator/branch/master/graph/badge.svg?token=C37SIU1IUG)](https://codecov.io/gh/ericlebail/tap-test-data-generator)
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 [![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
 [![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
+[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-310/)
 
 [Sources on Github](https://github.com/ericlebail/tap-test-data-generator)
 
