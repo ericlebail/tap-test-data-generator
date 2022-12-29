@@ -18,7 +18,7 @@ extras = {
 }
 setup(
     name="tap-test-data-generator",
-    version="1.3.0",
+    version="1.4.0",
     description="Singer.io tap for generating test data",
     long_description=long_description,
     long_description_content_type="text/markdown",
