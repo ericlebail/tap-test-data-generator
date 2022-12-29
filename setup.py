@@ -53,6 +53,6 @@ setup(
         "sample-config": ["sample_config.json"]
     },
     include_package_data=True,
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     zip_safe=False
 )
