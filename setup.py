@@ -30,6 +30,8 @@ setup(
     py_modules=["tap_test_data_generator"],
     install_requires=[
         "singer-python==5.12.1",
+        "setuptools==65.6.3",
+        "importlib-metadata==5.2.0",
         "requests",
         "jsonschema==2.6.0",
         "Faker==7.0.1",
@@ -51,6 +53,6 @@ setup(
         "sample-config": ["sample_config.json"]
     },
     include_package_data=True,
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     zip_safe=False
 )

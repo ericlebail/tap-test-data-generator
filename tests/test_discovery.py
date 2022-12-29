@@ -28,5 +28,5 @@ def test_discover():
             assert "type" in stream["schema"]["properties"]["checked"]
             assert "boolean" == stream["schema"]["properties"]["checked"]["type"]
     # test item number
-    assert item_number is 3
+    assert item_number == 3
 
