@@ -31,7 +31,7 @@ setup(
     install_requires=[
         "singer-python==5.12.1",
         "setuptools==65.5.1",
-        "importlib-metadata==4.12"
+        "importlib-metadata==5.2.0",
         "requests",
         "jsonschema==2.6.0",
         "Faker==7.0.1",
