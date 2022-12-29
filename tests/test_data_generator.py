@@ -418,7 +418,7 @@ def test_generate_object_type_empty():
     assert dictionary is not None
     assert "test_property" in dictionary
     assert dictionary["test_property"] is not None
-    assert len(dictionary["test_property"].keys()) is 0
+    assert len(dictionary["test_property"].keys()) == 0
 
 
 def test_generate_string_pair_enum():
