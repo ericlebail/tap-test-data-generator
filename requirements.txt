@@ -3,6 +3,7 @@
 #############################################
 singer-python==5.12.1
 setuptools==65.5.1
+importlib-metadata==4.12
 ijson==3.1.4
 jsonschema==2.6.0
 allpairspy==2.5.0
