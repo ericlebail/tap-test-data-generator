@@ -2,7 +2,7 @@
 # library dependencies
 #############################################
 singer-python==5.13.0
-setuptools==65.6.3
+setuptools==70.0.0
 importlib-metadata==5.2.0
 ijson==3.1.4
 jsonschema==2.6.0
