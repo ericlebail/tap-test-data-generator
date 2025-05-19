@@ -30,7 +30,7 @@ setup(
     py_modules=["tap_test_data_generator"],
     install_requires=[
         "singer-python==5.13.0",
-        "setuptools==70.0.0",
+        "setuptools==78.1.1",
         "importlib-metadata==5.2.0",
         "requests",
         "jsonschema==2.6.0",
